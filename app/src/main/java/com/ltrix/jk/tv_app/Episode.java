@@ -10,6 +10,7 @@ public class Episode {
     private String episodeURL,episodeName,episodeImage,summary,url;
 
     public Episode(int episodeID, int episodeNumber, int airedSeason, int runtime, String episodeURL, String episodeName, String episodeImage, String summary, String url) {
+
         this.episodeID = episodeID;
         this.episodeNumber = episodeNumber;
         this.airedSeason = airedSeason;

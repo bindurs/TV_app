@@ -2,13 +2,16 @@ package com.ltrix.jk.tv_app.adapter;
 
 import android.content.Context;
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageView;
 import android.widget.TextView;
 
-import com.ltrix.jk.tv_app.Actors;
 import com.ltrix.jk.tv_app.R;
+import com.ltrix.jk.tv_app.model.Actor;
+import com.squareup.picasso.Picasso;
 
 import java.util.List;
 
@@ -19,27 +22,31 @@ import java.util.List;
 public class ActorAdapter extends RecyclerView.Adapter<ActorAdapter.ActorViewHolder> {
 
     private Context context;
-    private List<Actors> actorList;
+    private List<Actor> actorList;
+    public TextView actorName,characterName;
+    public ImageView actorImage,characterImage;
 
     public class ActorViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener {
-        public TextView seasonNumber;
 
 
         public ActorViewHolder(View view) {
             super(view);
-//            seasonNumber = (TextView) view.findViewById(R.id.season_num);
-//            view.setOnClickListener(this);
+
+            actorName = (TextView) view.findViewById(R.id.actor_name);
+            characterName = (TextView) view.findViewById(R.id.character_name);
+
+            actorImage = (ImageView)view.findViewById(R.id.actor_image);
+            characterImage = (ImageView)view.findViewById(R.id.character_image);
+
         }
 
         @Override
         public void onClick(View view) {
 
-//            Log.d("RecyclerView", "CLICK!");
-//            Intent i = new Intent(context,ShowDetailsActivity.class);
-//            context.startActivity(i);
+
         }
     }
-    public ActorAdapter(List<Actors> actorList, Context context) {
+    public ActorAdapter(List<Actor> actorList, Context context) {
         this.context = context;
         this.actorList = actorList;
     }
@@ -55,12 +62,18 @@ public class ActorAdapter extends RecyclerView.Adapter<ActorAdapter.ActorViewHol
     @Override
     public void onBindViewHolder(ActorAdapter.ActorViewHolder holder, int position) {
 
-        Actors season = actorList.get(position);
-       // holder.seasonNumber.setText(""+season.getNumber());
+        Actor actor = actorList.get(position);
+
+        actorName.setText((CharSequence) actor.getPerson().getName());
+        characterName.setText((CharSequence) actor.getCharacter().getName());
+
+        Picasso.with(context).load(actor.getPerson().getImage().getMedium()).placeholder(R.drawable.demo).fit().centerCrop().into(actorImage);
     }
 
     @Override
     public int getItemCount() {
+
+        Log.v("***************", String.valueOf(actorList.size()));
         return actorList.size();
     }
 }

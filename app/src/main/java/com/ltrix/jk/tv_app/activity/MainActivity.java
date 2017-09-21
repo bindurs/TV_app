@@ -6,24 +6,30 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.DefaultItemAnimator;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.StaggeredGridLayoutManager;
+import android.util.Log;
 import android.view.View;
 import android.widget.TextView;
 
 import com.ltrix.jk.tv_app.R;
-import com.ltrix.jk.tv_app.Shows;
 import com.ltrix.jk.tv_app.adapter.ShowsAdapter;
+import com.ltrix.jk.tv_app.model.Show;
+import com.ltrix.jk.tv_app.webservice.RestServiceBuilder;
 
 import java.util.ArrayList;
 import java.util.List;
 
+import retrofit2.Call;
+import retrofit2.Callback;
+import retrofit2.Response;
+
 public class MainActivity extends AppCompatActivity {
 
-    private List<Shows> movieList = new ArrayList<>();
+    private List<Show> movieList = new ArrayList<>();
     private RecyclerView recyclerView;
     private ShowsAdapter mAdapter;
     private TextView action_bar_title;
     private TextView action_bar_main_title;
-
+    private int pageNumber = 1;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -40,36 +46,33 @@ public class MainActivity extends AppCompatActivity {
 
         recyclerView = (RecyclerView) findViewById(R.id.recycler_view);
 
-        mAdapter = new ShowsAdapter(movieList,MainActivity.this);
+
         // RecyclerView.LayoutManager mLayoutManager = new LinearLayoutManager(getApplicationContext());
         //recyclerView.setLayoutManager(mLayoutManager);
         recyclerView.setLayoutManager(new StaggeredGridLayoutManager(2,StaggeredGridLayoutManager.VERTICAL));
         recyclerView.setItemAnimator(new DefaultItemAnimator());
-        recyclerView.setAdapter(mAdapter);
+
 
         prepareMovieData();
     }
 
     private void prepareMovieData() {
-        Shows movie = new Shows(0,"Mad Max: Fury Road", "Action & Adventure", "2015",0.0,"","","","","","","https://i.imgur.com/tGbaZCY.jpg");
-        movieList.add(movie);
+        RestServiceBuilder.getApiService().getShows(pageNumber).enqueue(new Callback<List<Show>>() {
+            @Override
+            public void onResponse(Call<List<Show>> call, Response<List<Show>> response) {
+                movieList=response.body();
+                mAdapter = new ShowsAdapter(movieList,MainActivity.this);
+                recyclerView.setAdapter(mAdapter);
+                Log.e("response",""+movieList.size());
+//                mAdapter.notifyDataSetChanged();
+            }
 
-        movie = new Shows(0,"Mad Max: Fury Road", "Action & Adventure", "2015",0.0,"","","","","","","https://assets.mubi.com/images/notebook/post_images/22621/images-w1400.jpg?1481167057");
-        movieList.add(movie);
+            @Override
+            public void onFailure(Call<List<Show>> call, Throwable t) {
+                Log.e("ERROR",""+t.getMessage());
+            }
+        });
 
-        movie = new Shows(0,"Mad Max: Fury Road", "Action & Adventure", "2015",0.0,"","","","","","","https://i.pinimg.com/736x/c1/ab/78/c1ab782b93344350aa968604dbfdc9d8--fun-recipes-jodie-foster.jpg");
-        movieList.add(movie);
-
-        movie = new Shows(0,"Mad Max: Fury Road", "Action & Adventure", "2015",0.0,"","","","","","","https://i.pinimg.com/736x/ec/bc/0e/ecbc0e5cd54c3a7f444c8568231ab9b6--joseph-gordon-levitt-bruce-willis.jpg");
-        movieList.add(movie);
-
-        movie = new Shows(0,"Mad Max: Fury Road", "Action & Adventure", "2015",0.0,"","","","","","","http://static.boredpanda.com/blog/wp-content/uploads/2016/11/honest-movie-posters-067-583d73614a3b8__605.jpg");
-        movieList.add(movie);
-
-        movie = new Shows(0,"Mad Max: Fury Road", "Action & Adventure", "2015",0.0,"","","","","","","http://static.boredpanda.com/blog/wp-content/uploads/2016/11/honest-movie-posters-031-583d72f44cb26__605.jpg");
-        movieList.add(movie);
-
-        mAdapter.notifyDataSetChanged();
     }
 }
 

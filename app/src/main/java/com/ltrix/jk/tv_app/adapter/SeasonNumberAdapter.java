@@ -1,6 +1,7 @@
 package com.ltrix.jk.tv_app.adapter;
 
 import android.content.Context;
+import android.content.Intent;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -8,7 +9,8 @@ import android.view.ViewGroup;
 import android.widget.TextView;
 
 import com.ltrix.jk.tv_app.R;
-import com.ltrix.jk.tv_app.Season;
+import com.ltrix.jk.tv_app.activity.SeasonDetailsActivity;
+import com.ltrix.jk.tv_app.model.Season;
 
 import java.util.List;
 
@@ -36,9 +38,8 @@ public class SeasonNumberAdapter extends RecyclerView.Adapter<SeasonNumberAdapte
         @Override
         public void onClick(View view) {
 
-//            Log.d("RecyclerView", "CLICK!");
-//            Intent i = new Intent(context,ShowDetailsActivity.class);
-//            context.startActivity(i);
+            Intent i = new Intent(context,SeasonDetailsActivity.class);
+            context.startActivity(i);
         }
     }
     public SeasonNumberAdapter(List<Season> seasonList, Context context) {

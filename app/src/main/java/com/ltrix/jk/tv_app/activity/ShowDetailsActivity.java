@@ -6,25 +6,35 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.DefaultItemAnimator;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.text.Html;
+import android.text.Spanned;
+import android.util.Log;
 import android.view.View;
+import android.widget.ImageView;
 import android.widget.TextView;
 
-import com.ltrix.jk.tv_app.Actors;
-import com.ltrix.jk.tv_app.Episode;
 import com.ltrix.jk.tv_app.R;
-import com.ltrix.jk.tv_app.Season;
 import com.ltrix.jk.tv_app.ShowsInfo;
 import com.ltrix.jk.tv_app.adapter.ActorAdapter;
 import com.ltrix.jk.tv_app.adapter.SeasonNumberAdapter;
+import com.ltrix.jk.tv_app.model.Actor;
+import com.ltrix.jk.tv_app.model.Season;
+import com.ltrix.jk.tv_app.model.Show;
+import com.ltrix.jk.tv_app.webservice.RestServiceBuilder;
+import com.squareup.picasso.Picasso;
 
 import java.util.ArrayList;
 import java.util.List;
 
+import retrofit2.Call;
+import retrofit2.Callback;
+import retrofit2.Response;
+
 public class ShowDetailsActivity extends AppCompatActivity {
 
     private List<Season> seasonList = new ArrayList<>();
-    private List<Episode> episodeList = new ArrayList<>();
-    private List<Actors> actorsList = new ArrayList<>();
+    private List<Actor> actorsList = new ArrayList<>();
+
     private TextView action_bar_title;
     private TextView action_bar_main_title;
     private SeasonNumberAdapter sAdapter;
@@ -32,6 +42,9 @@ public class ShowDetailsActivity extends AppCompatActivity {
     private RecyclerView recyclerView;
     private RecyclerView actorsListView;
     private ShowsInfo showInfo;
+    private ImageView showImage;
+    private Show show;
+    private TextView textShowDesc,textShowStatus,textShowPremieredDate,textShowRunTime,textShowOfficialSite,textShowUrl,textShowRating;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
 
@@ -46,7 +59,6 @@ public class ShowDetailsActivity extends AppCompatActivity {
 
         action_bar_title.setVisibility(View.VISIBLE);
         action_bar_main_title.setVisibility(View.GONE);
-
 
 //        ImageView image = (ImageView)findViewById(R.id.backView);
 //        BlurringView blurringView = (BlurringView)findViewById(R.id.blurringView);
@@ -66,63 +78,102 @@ public class ShowDetailsActivity extends AppCompatActivity {
 //        });-
 //
 //        blurringView.setBlurredView(image);
+        initFields();
+
+        show = (Show) getIntent().getSerializableExtra("show");
+        if (show != null) {
+            prepareSeason(show.getId());
+            prepareActors(show.getId());
+            setFields();
+        }
+    }
+
+    private void initFields() {
+
+        showImage = (ImageView)findViewById(R.id.show_image);
+        textShowDesc = (TextView)findViewById(R.id.show_desc);
+        textShowPremieredDate = (TextView)findViewById(R.id.txt_premiered_date);
+        textShowOfficialSite = (TextView)findViewById(R.id.txt_officialsite);
+        textShowRunTime = (TextView)findViewById(R.id.txt_runtime);
+        textShowStatus = (TextView)findViewById(R.id.txt_vw_status);
+        textShowUrl =  (TextView)findViewById(R.id.txt_url);
+        textShowRating = (TextView)findViewById(R.id.txt_rating);
 
         LinearLayoutManager layoutManager1 = new LinearLayoutManager(this);
         layoutManager1.setOrientation(LinearLayoutManager.HORIZONTAL);
 
         recyclerView = (RecyclerView) findViewById(R.id.seasonList);
-        sAdapter = new SeasonNumberAdapter(seasonList, ShowDetailsActivity.this);
         recyclerView.setLayoutManager(layoutManager1);
         recyclerView.setItemAnimator(new DefaultItemAnimator());
-        recyclerView.setAdapter(sAdapter);
 
         LinearLayoutManager layoutManager2 = new LinearLayoutManager(this);
         layoutManager2.setOrientation(LinearLayoutManager.VERTICAL);
 
         actorsListView = (RecyclerView) findViewById(R.id.actorsList);
-        actorAdaptor = new ActorAdapter(actorsList,ShowDetailsActivity.this);
         actorsListView.setLayoutManager(layoutManager2);
         actorsListView.setItemAnimator(new DefaultItemAnimator());
-        actorsListView.setAdapter(actorAdaptor);
+    }
 
-        prepareSeason();
+    private void setFields () {
+
+        Picasso.with(this).load(show.getImage().getMedium()).placeholder(R.drawable.demo).fit().centerCrop().into(showImage);
+        textShowDesc.setText(stripHtml(show.getSummary()));
+        textShowPremieredDate.setText(": "+show.getPremiered());
+        textShowOfficialSite.setText(": "+show.getOfficialSite());
+        textShowRunTime.setText(": "+show.getRuntime()+"");
+        textShowStatus.setText(": "+show.getStatus());
+        textShowUrl.setText(": "+show.getUrl());
+        textShowRating.setText(": "+show.getRating());
 
     }
 
-    private void prepareSeason () {
+    public Spanned stripHtml(String html) {
+        if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.N) {
+            return Html.fromHtml(html, Html.FROM_HTML_MODE_LEGACY);
+        } else {
+            return Html.fromHtml(html);
+        }
+    }
 
-        Season season = new Season(1,1,1,"","fdds","","","","", "");
-        season.setSeasonID(1);
+    private void prepareSeason (Integer showID) {
 
-        seasonList.add(season);
+        RestServiceBuilder.getApiService().getSeasons(showID).enqueue(new Callback<List<Season>>() {
+            @Override
+            public void onResponse(Call<List<Season>> call, Response<List<Season>> response) {
 
-        season = new Season(2,2,2,"","","","", "","","");
-        seasonList.add(season);
 
-        season = new Season(3,3,3,"","","","","","","");
-        seasonList.add(season);
+                seasonList = response.body();
+                Log.e("response",""+seasonList);
+                sAdapter = new SeasonNumberAdapter(seasonList, ShowDetailsActivity.this);
+                recyclerView.setAdapter(sAdapter);
 
-        sAdapter.notifyDataSetChanged();
+            }
 
-        Actors actor = new Actors("fhbv","erge");
-        actorsList.add(actor);
+            @Override
+            public void onFailure(Call<List<Season>> call, Throwable t) {
+                Log.e("ERROR",""+t.getMessage());
 
-        actor = new Actors("uy","ert");
-        actorsList.add(actor);
+            }
+        });
 
-        actor = new Actors("cszd","sdffr");
-        actorsList.add(actor);
+    }
 
-//        Episode episode = new Episode(1,1,1,1,"","","","","");
-//        episodeList.add(episode);
-//
-//        episode = new Episode(2,2,2,2,"","","","","");
-//        episodeList.add(episode);
-//
-//        episode = new Episode(3,3,3,3,"","","","","");
-//        episodeList.add(episode);
-//
-//        showInfo = new ShowsInfo(seasonList,episodeList);
+    private void prepareActors (Integer showID) {
 
+        RestServiceBuilder.getApiService().getActors(showID).enqueue(new Callback<List<Actor>>() {
+            @Override
+            public void onResponse(Call<List<Actor>> call, Response<List<Actor>> response) {
+
+                actorsList = response.body();
+                actorAdaptor = new ActorAdapter(actorsList,ShowDetailsActivity.this);
+                actorsListView.setAdapter(actorAdaptor);
+
+            }
+
+            @Override
+            public void onFailure(Call<List<Actor>> call, Throwable t) {
+                Log.e("ERROR",""+t.getMessage());
+            }
+        });
     }
 }
