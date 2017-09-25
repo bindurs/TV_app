@@ -19,7 +19,7 @@ public class Character implements Serializable {
     private String name;
     @SerializedName("image")
     @Expose
-    private Object image;
+    private Image image;
     @SerializedName("_links")
     @Expose
     private Links links;
@@ -48,11 +48,11 @@ public class Character implements Serializable {
         this.name = name;
     }
 
-    public Object getImage() {
+    public Image getImage() {
         return image;
     }
 
-    public void setImage(Object image) {
+    public void setImage(Image image) {
         this.image = image;
     }
 

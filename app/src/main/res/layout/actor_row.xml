@@ -14,7 +14,9 @@
         android:layout_marginLeft="10dp"
         android:layout_marginRight="10dp"
         android:layout_marginTop="10dp"
-        android:background="@drawable/round_imageview_background"
+        android:adjustViewBounds="true"
+        android:cropToPadding="true"
+        android:src="@drawable/round_imageview_background"
         app:srcCompat="@mipmap/ic_launcher" />
 
     <LinearLayout
@@ -49,6 +51,7 @@
         android:layout_marginLeft="10dp"
         android:layout_marginRight="10dp"
         android:layout_marginTop="10dp"
-        android:background="@drawable/round_imageview_background"
+        android:adjustViewBounds="true"
+        android:src="@drawable/round_imageview_background"
         app:srcCompat="@mipmap/ic_launcher" />
 </LinearLayout>

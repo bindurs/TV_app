@@ -45,10 +45,6 @@ public class MainActivity extends AppCompatActivity {
         action_bar_main_title.setVisibility(View.VISIBLE);
 
         recyclerView = (RecyclerView) findViewById(R.id.recycler_view);
-
-
-        // RecyclerView.LayoutManager mLayoutManager = new LinearLayoutManager(getApplicationContext());
-        //recyclerView.setLayoutManager(mLayoutManager);
         recyclerView.setLayoutManager(new StaggeredGridLayoutManager(2,StaggeredGridLayoutManager.VERTICAL));
         recyclerView.setItemAnimator(new DefaultItemAnimator());
 
@@ -57,6 +53,7 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private void prepareMovieData() {
+
         RestServiceBuilder.getApiService().getShows(pageNumber).enqueue(new Callback<List<Show>>() {
             @Override
             public void onResponse(Call<List<Show>> call, Response<List<Show>> response) {

@@ -1,6 +1,7 @@
 package com.ltrix.jk.tv_app.webservice;
 
 import com.ltrix.jk.tv_app.model.Actor;
+import com.ltrix.jk.tv_app.model.Episode;
 import com.ltrix.jk.tv_app.model.Season;
 import com.ltrix.jk.tv_app.model.Show;
 
@@ -25,4 +26,8 @@ public interface RestService {
 
     @GET("/shows/{id}/cast")
     Call <List<Actor>>getActors(@Path("id") int id);
+
+    @GET("/shows/{id}/episodes")
+    Call <List<Episode>>getEpisodes(@Path("id") int id);
+
 }

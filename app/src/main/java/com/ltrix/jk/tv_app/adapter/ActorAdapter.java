@@ -64,10 +64,14 @@ public class ActorAdapter extends RecyclerView.Adapter<ActorAdapter.ActorViewHol
 
         Actor actor = actorList.get(position);
 
-        actorName.setText((CharSequence) actor.getPerson().getName());
-        characterName.setText((CharSequence) actor.getCharacter().getName());
+        actorName.setText(actor.getPerson().getName());
+        characterName.setText(actor.getCharacter().getName());
 
-        Picasso.with(context).load(actor.getPerson().getImage().getMedium()).placeholder(R.drawable.demo).fit().centerCrop().into(actorImage);
+        if (actor.getCharacter().getImage()!=null) {
+
+            Picasso.with(context).load(actor.getPerson().getImage().getMedium()).placeholder(R.drawable.demo).fit().centerCrop().into(actorImage);
+            Picasso.with(context).load(actor.getCharacter().getImage().getMedium()).placeholder(R.drawable.demo).fit().centerCrop().into(characterImage);
+        }
     }
 
     @Override
@@ -76,4 +80,5 @@ public class ActorAdapter extends RecyclerView.Adapter<ActorAdapter.ActorViewHol
         Log.v("***************", String.valueOf(actorList.size()));
         return actorList.size();
     }
+
 }

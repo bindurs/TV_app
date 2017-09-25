@@ -2,6 +2,7 @@ package com.ltrix.jk.tv_app;
 
 import android.util.Log;
 
+import com.ltrix.jk.tv_app.model.Episode;
 import com.ltrix.jk.tv_app.model.Season;
 
 import java.util.ArrayList;

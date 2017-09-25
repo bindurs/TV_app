@@ -118,12 +118,12 @@ public class ShowDetailsActivity extends AppCompatActivity {
 
         Picasso.with(this).load(show.getImage().getMedium()).placeholder(R.drawable.demo).fit().centerCrop().into(showImage);
         textShowDesc.setText(stripHtml(show.getSummary()));
-        textShowPremieredDate.setText(": "+show.getPremiered());
-        textShowOfficialSite.setText(": "+show.getOfficialSite());
-        textShowRunTime.setText(": "+show.getRuntime()+"");
-        textShowStatus.setText(": "+show.getStatus());
-        textShowUrl.setText(": "+show.getUrl());
-        textShowRating.setText(": "+show.getRating());
+        textShowPremieredDate.setText(show.getPremiered());
+        textShowOfficialSite.setText(show.getOfficialSite());
+        textShowRunTime.setText(show.getRuntime()+"");
+        textShowStatus.setText(show.getStatus());
+        textShowUrl.setText(show.getUrl());
+        textShowRating.setText(""+show.getRating());
 
     }
 
@@ -144,7 +144,7 @@ public class ShowDetailsActivity extends AppCompatActivity {
 
                 seasonList = response.body();
                 Log.e("response",""+seasonList);
-                sAdapter = new SeasonNumberAdapter(seasonList, ShowDetailsActivity.this);
+                sAdapter = new SeasonNumberAdapter(seasonList,show, true,ShowDetailsActivity.this);
                 recyclerView.setAdapter(sAdapter);
 
             }

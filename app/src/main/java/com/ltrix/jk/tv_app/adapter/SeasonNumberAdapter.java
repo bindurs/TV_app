@@ -3,6 +3,7 @@ package com.ltrix.jk.tv_app.adapter;
 import android.content.Context;
 import android.content.Intent;
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -11,7 +12,9 @@ import android.widget.TextView;
 import com.ltrix.jk.tv_app.R;
 import com.ltrix.jk.tv_app.activity.SeasonDetailsActivity;
 import com.ltrix.jk.tv_app.model.Season;
+import com.ltrix.jk.tv_app.model.Show;
 
+import java.io.Serializable;
 import java.util.List;
 
 /**
@@ -22,8 +25,10 @@ public class SeasonNumberAdapter extends RecyclerView.Adapter<SeasonNumberAdapte
 
     private Context context;
     private List<Season> seasonList;
+    private boolean fromShowDetails;
+    private Show show;
 
-    public class SeasonViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener {
+    public class SeasonViewHolder extends RecyclerView.ViewHolder {
 
         public TextView seasonNumber;
 
@@ -31,20 +36,14 @@ public class SeasonNumberAdapter extends RecyclerView.Adapter<SeasonNumberAdapte
         public SeasonViewHolder(View view) {
             super(view);
             seasonNumber = (TextView) view.findViewById(R.id.season_num);
-            view.setOnClickListener(this);
         }
 
-
-        @Override
-        public void onClick(View view) {
-
-            Intent i = new Intent(context,SeasonDetailsActivity.class);
-            context.startActivity(i);
-        }
     }
-    public SeasonNumberAdapter(List<Season> seasonList, Context context) {
+    public SeasonNumberAdapter(List<Season> seasonList, Show show, Boolean fromShowDetails, Context context) {
         this.context = context;
         this.seasonList = seasonList;
+        this.fromShowDetails = fromShowDetails;
+        this.show = show;
     }
 
     @Override
@@ -58,9 +57,31 @@ public class SeasonNumberAdapter extends RecyclerView.Adapter<SeasonNumberAdapte
     @Override
     public void onBindViewHolder(SeasonNumberAdapter.SeasonViewHolder holder, int position) {
 
-        Season season = seasonList.get(position);
+        final Season season = seasonList.get(position);
         holder.seasonNumber.setText(""+season.getNumber());
+
+        Log.v("#############################",""+season.getId());
+
+        holder.itemView.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+
+                if (fromShowDetails) {
+
+                    Intent i = new Intent(context, SeasonDetailsActivity.class);
+                    i.putExtra("season", season);
+                    i.putExtra("show", show);
+                    i.putExtra("seasonList", (Serializable) seasonList);
+                    context.startActivity(i);
+
+                } else {
+
+
+                }
+            }
+        });
     }
+
 
     @Override
     public int getItemCount() {
